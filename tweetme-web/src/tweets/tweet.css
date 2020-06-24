@@ -1,0 +1,52 @@
+.parentTweet{
+	font-family: Candara, verdana, helvetica;
+	font-size: 108%;
+	color: grey;
+}
+
+.parentTweet:hover{
+
+	color: cyan;
+}
+
+.like-count{
+	font-family: Candara, verdana, helvetica;
+	font-size: 26px;
+	color: #2196f3;
+}
+.like-btn{
+	-webkit-backface-visibility:hidden;
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
+	border: 2px solid rgba(165,189,240, 0.8);
+	transition: 0.25s ease-out all;
+}
+
+.like-btn:focus{
+	outline:none;
+}
+
+.like-btn:hover{
+	transform: scale(1.05);
+	background-color: rgba(165,189,240, 0.75);
+}
+
+.unlike-btn{
+	-webkit-backface-visibility:hidden;
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
+	transition: 0.25s ease-out all;
+	border: 2px solid rgba(165,189,240, 0.8);
+}
+
+.unlike-btn:focus{
+	outline: none;
+}
+
+
+.unlike-btn:hover{
+	box-shadow: 0, 80px, 8px, rgba(5,5,50,0.75);
+	background-color: rgba(165,189,240, 0.75);
+	transform: scale(0.95);
+}
+
