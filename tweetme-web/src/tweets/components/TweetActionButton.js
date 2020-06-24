@@ -47,16 +47,17 @@ class ActionBtn extends React.Component {
     	const {tweet, action} = this.props;
     	var icon = this.state.displayIcon
     	let foo ={'tweet':tweet, 'action': action}
+    	// const once =() =>{}
     	return action.type === 'like-action' ? 
     			(
 		        <span className='like-count'><span style={{position:'relative', top: '2px'}}>{this.state.likes}</span>
 	       	       <i style={{fontSize: '23px', cursor: 'pointer'}} onClick={this.props.handleTweetBtnActions.bind(foo, this.handleEvent)} id={`tweet-${tweet.id}`} className={icon}></i></span>
 		    	) : action.type === 'retweet' ?
 
-				( 
+				(
 				<span >	
 		      	<i style={{fontSize: '25px', position:'relative', top: '12.5px', cursor: 'pointer'}} className='fas  blue-text fa-retweet float-md-right'
-		      	 onClick={this.props.handleTweetBtnActions.bind(foo, this.handleEvent)}
+		      	 onClick={(event)=> {this.props.handleTweetBtnActions(foo, this.handleEvent,this.props.setTweet, event)}}
 		      	 id={`tweet-${tweet.id}`}>
 		       	 </i>
 		       	 </span>

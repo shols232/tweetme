@@ -1,10 +1,159 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <div id="tweet-me" class="row">
+    </div>
+
+    <div class="row pb-2 mb-4 border-bottom text-center">
+        <h1 class="col">Welcome To TweetMe</h1>
+    </div>
+
+    <div class="row d-none">
+        <div class="col-md-4 mx-auto col-10">
+            <form class="form" method="POST" id="create-tweet-form" action="/tweets/create/">
+                {% csrf_token %}
+                <input type="hidden" value="/" name="next" />
+                <textarea name="content" required='required' class="form-control mb-3 rounded" placeholder="Your Tweet..."></textarea>
+                <button class="btn btn-primary mb-2">Tweet</button>
+            </form>
+        </div>
+
+    </div>
+
+    <div id="tweets" class="row d-none">
+        <h1>Loading...</h1>
+    </div>
+
+<script type="text/javascript">
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+const formatTweet = (tweet) => {
+    function LikeBtn(tweet) {
+            return "<button class='btn btn-primary btn-sm' id='like-tweet-"+tweet.id+"'>" + tweet.likes + " Likes</button>"
+        }
+
+    function UnLikeBtn(tweet) {
+            return "<button class='btn btn-outline-primary btn-sm' id='unlike-tweet-"+tweet.id+"'> UnLike </button>"
+        }
+
+    function RetweetBtn(tweet) {
+            return "<h6 class='float-md-right text-primary retweet' id='retweet-"+tweet.id+"'>Retweet</h6>"
+        }
+   return "<div class='tweet mb-4 col-12 col-md-10 mx-auto rounded border p-4' ><p>" + tweet.content + "</p>" + LikeBtn(tweet) + UnLikeBtn(tweet) + RetweetBtn(tweet) +"</div>"
+
+}
+
+function handleActionBtn (tweet_id, currentCount, action) {
+            const url = '/api/tweets/action/'
+            const method = 'POST'
+            const csrfToken = getCookie('csrftoken');
+            const body = JSON.stringify({
+                id: tweet_id,
+                action: action,
+            })
+            data = {
+                method:method,
+                body: body,
+                headers: {
+                "X-Requested-With":'XMLHttpRequest',
+                "X-CSRFToken": csrfToken,
+                "Content-Type": "Application/json"
+                }
+            }
+
+            fetch(url, data)
+            .then(resp => resp.json())
+            .then(response => {
+                getTweets()
+            })
+
+        }
+
+let tweetsContainer = document.getElementById('tweets')
+function getTweets(){
+    fetch('http://127.0.0.1:8000/tweets/')
+    .then(resp => resp.json())
+    .then(response => {
+        const tweetList = response;
+        var finalTweetList = '';
+
+        tweetsContainer.innerHTML = ''
+        for(var i=0; i<tweetList.length; i++){
+                currentTweet = formatTweet(tweetList[i])
+                tweetsContainer.insertAdjacentHTML('beforeend', currentTweet)
+                var likeId_ ='like-tweet-'+ tweetList[i].id
+                var unlikeId_ ='unlike-tweet-'+ tweetList[i].id
+                var retweetId_ ='retweet-'+ tweetList[i].id
+                document.getElementById(likeId_).addEventListener('click', handleActionBtn.bind(event, tweetList[i].id, tweetList[i].likes, 'like'))
+                document.getElementById(unlikeId_).addEventListener('click', handleActionBtn.bind(event, tweetList[i].id, tweetList[i].likes, 'unlike'))
+                document.getElementById(retweetId_).addEventListener('click', handleActionBtn.bind(event, tweetList[i].id, tweetList[i].likes, 'retweet'))
+        }
+    })
+    .catch(function(error){
+            console.log(error)
+        })
+}
+
+
+
+getTweets()
+    const handleTweetsSubmitForm = (event) => {
+        event.preventDefault()
+        const myForm = event.target
+        var formData = new FormData(myForm)
+        let url = myForm.getAttribute('action')
+        let method = myForm.getAttribute('method')
+
+        let fetchData = {
+            method: method,
+            body: formData,
+            headers: {"X-Requested-With":'XMLHttpRequest'}
+        }
+
+        fetch(url, fetchData)
+        .then(resp => {
+
+            if (!resp.ok){
+                throw Error(resp.status)
+            }
+            return resp.json()
+        })
+        .then(response => {
+                newTweet = formatTweet(response)
+                tweetsContainer.insertAdjacentHTML('afterbegin', newTweet)
+                myForm.reset()
+
+                var likeId_ ='like-tweet-'+ response.id
+                var unlikeId_ ='unlike-tweet-'+ response.id
+                var retweetId_ ='retweet-'+ response.id
+                document.getElementById(likeId_).addEventListener('click', handleActionBtn.bind(event, response.id, response.likes, 'like'))
+                document.getElementById(unlikeId_).addEventListener('click', handleActionBtn.bind(event, response.id, response.likes, 'unlike'))
+                document.getElementById(retweetId_).addEventListener('click', handleActionBtn.bind(event, response.id, response.likes, 'retweet'))
+        })
+        .catch(function(error){
+            console.log(error)
+        })
+    }
+
+    TweetForm = document.getElementById('create-tweet-form')
+    TweetForm.addEventListener('submit', handleTweetsSubmitForm)
+</script>
+{% endblock content %}

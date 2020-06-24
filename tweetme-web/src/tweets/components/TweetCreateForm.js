@@ -4,7 +4,7 @@ import React, {useState, useEffect }  from 'react';
 export const TweetCreateForm = (props) => {
 	const { handleDidTweet } = props;
 	const [tweetContent, setTweetContent] = useState()
-
+    var token = sessionStorage.getItem('token')
 	const textAreaRef = React.createRef()
 
 	let temporaryNewTweet;
@@ -18,14 +18,13 @@ export const TweetCreateForm = (props) => {
 	useEffect(() => {
 		if(tweetContent !== undefined){
 			let tweet_data = JSON.stringify({content:tweetContent})
-			console.log('tweet_data', tweet_data)
-
 	        let fetchData = {
 	            method: 'POST',
 	            body: tweet_data,
 	            headers: {
 	            	"X-Requested-With":"XMLHttpRequest",
-	                "Content-Type": "Application/json"
+	                "Content-Type": "Application/json",
+                	"Authorization": `Token ${token}`
 				}
     		}
 

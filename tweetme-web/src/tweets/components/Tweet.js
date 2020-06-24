@@ -16,12 +16,10 @@ export const ParentTweet = ({tweet}) => {
     }
 }
 
-export const Tweet = ({tweet, className, isRetweet, handleTweetBtnActions, isDetail}) => {
-
-
+export const Tweet = ({tweet, className, isRetweet, handleTweetBtnActions, isDetail, setTweet}) => {
     return  (
-
     	<div className={className ? className : 'tweet mb-4 col-12 col-md-10 mx-auto rounded border p-4'}>
+    	<span className='blue-text'>{tweet.user.username}</span>
     	<p>{tweet.id}-{tweet.content}</p>
     	<ParentTweet tweet = {tweet} />
     	{isRetweet !== true ?
@@ -29,11 +27,10 @@ export const Tweet = ({tweet, className, isRetweet, handleTweetBtnActions, isDet
 				<div className='align-items-center' >
 		    	<ActionBtn tweet={tweet} handleTweetBtnActions={handleTweetBtnActions} action={{type:'like-action', display:'Like'}}/> 
     			<ActionBtn tweet={tweet} isDetail = {isDetail ? isDetail : false} action={{type:'viewTweet', display:'View'}}/> 
-		    	<ActionBtn tweet={tweet} handleTweetBtnActions={handleTweetBtnActions} action={{type:'retweet', display:'Retweet'}}/>
+		    	<ActionBtn tweet={tweet} setTweet={setTweet} handleTweetBtnActions={handleTweetBtnActions} action={{type:'retweet', display:'Retweet'}}/>
 		    	</div>
     			):null
     	 }
-
     	</div>
     )
 

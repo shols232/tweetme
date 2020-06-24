@@ -5,7 +5,9 @@ import {Redirect} from "react-router-dom";
 
 // here we destructure the passed value of 'this' into its components 'tweet' and 'action'
 export default function handleTweetButtonActions({tweet, action}={}, callback, retweet, event){
+	console.log('call', callback,'retweet', retweet,'event', event)
 	event.preventDefault()
+	console.log('call', callback,'retweet', retweet,'event', event)
     var token = sessionStorage.getItem('token')
 	axios({
 		method:'POST',

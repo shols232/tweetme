@@ -1,5 +1,6 @@
 import React,  {Component} from 'react';
 import './profile.css'
+import { useParams, Redirect, withRouter } from "react-router-dom"
 import axios from 'axios'
 
 class Profile extends Component {
@@ -10,52 +11,58 @@ class Profile extends Component {
     		username:'',
     		email: '',
     		bio: '',
+            exists: false,
+            personalProfile: false
     	}
-
     }
 
     getOrUpdateProfile = (username, isEdit) => {
-    			var token = sessionStorage.getItem('token')
-		console.log(token)
-    		var endpoint = isEdit ? 'shols3/edit' : 'shols3'
-    		var method = isEdit ? 'POST' : 'GET'
-    		var data = isEdit ? {bio: this.state.bio, username: this.state.username} : null
-    		console.log(method, endpoint)
+		var token = sessionStorage.getItem('token')
+		var endpoint = isEdit ? `${username}/edit/` : username
+		var method = isEdit ? 'POST' : 'GET'
+		var data = isEdit ? {bio: this.state.bio, username: this.state.username} : null
+		console.log(method, endpoint, username)
     	axios({method:method,
-            url: `http://localhost:8000/api/account/profile/${endpoint}/`,
+            url: `http://localhost:8000/api/account/profile/${endpoint}`,
             headers: {
                 "X-Requested-With":"XMLHttpRequest",
                 "Content-Type": "Application/json",
                 "Authorization": `Token ${token}`
             	},
             data: data 
-            })
-			.then((response) => {
-				var data = response.data
-				console.log(data)
-				this.setState({
-					username: data.username,
-					bio: data.bio
-				})
-				console.log(this.state)
-			},
-			(error) => {
-				console.log(error)
-				if(error.response.status===401){
-					console.log(error.response.status)
-					}
-				}
-			)
+        })
+		.then((response) => {
+			var data = response.data
+			this.setState({
+				username: data.user.username,
+				bio: data.bio,
+                exists: true
+			})
+		},
+		(error) => {
+			console.log(error)
+			if(error.response.status===401){
+				console.log(error.response.status)
+                console.log('You NeedTo Log In to view this page')
+                this.setState(prevState => ({exists: false}))
+			}
+            else{
+                this.setState(prevState => ({exists: false}))   
+            }
+		}
+		)
     }
 
 
-	componentDidMount() {
-			this.getOrUpdateProfile('shols3', false )
+	componentWillMount() {
+        var username = this.props.match.params.username
+		this.getOrUpdateProfile(username, false )
     }
 
     onProfileUpdateFormSubmit = (event) => {
     	event.preventDefault()
-		this.getOrUpdateProfile('shols3', true)
+        this.props.history.push(`/profiles/${this.state.username}`)
+		this.getOrUpdateProfile(this.state.username, true)
 
     } 
 
@@ -66,7 +73,8 @@ class Profile extends Component {
     } 
 
     render() {
-	return (
+        console.log(this.state.exists)
+	return this.state.exists === true ? (
     <div className="container">
        <div className="Back">
             <i className="fa fa-arrow-left" onClick={window.history.back}></i>
@@ -96,11 +104,11 @@ class Profile extends Component {
             </div>
         </form>
     </div>   
-    );
+    ): (null)
     }
 }
 
-export default Profile;
+export default withRouter(Profile);
 
 
     

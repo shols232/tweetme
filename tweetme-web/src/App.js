@@ -16,7 +16,7 @@ class App extends Component {
         super(props);
         this.state = {
 
-          loggedIn:true,
+          loggedIn:sessionStorage.getItem('token') || false,
           username: '',
         }
     }
@@ -24,37 +24,42 @@ class App extends Component {
 
 
     Pages = () => {
-    //   return (
-    // <Router>
-    //   <Switch> 
-    //      <Route path='/login' ><Login /></Route>
-    //      <Route path='/register' ><Register /></Route>
-    //       {this.state.loggedIn ? 
-    //           <React.Fragment >
-    //             <Route path='/tweet/:id' >
-    //               <TweetDetail />
-    //             </Route>
-    //               <Route exact path='/' >
-    //                 <TweetComponent />
-    //               </Route>
-    //             </React.Fragment>          
-    //             :
-    //          <Redirect to={{pathname:'/login', state:'Please log in to view that page'}} />
-    //       }
-    //   </Switch>  
-    // </Router>
-        // )
+        console.log('loggedInState', this.state.loggedIn)
+      return (
+    <Router>
+      <Switch> 
+         <Route path='/login' ><Login /></Route>
+         <Route path='/register' ><Register /></Route>
+          {this.state.loggedIn ? 
+              <React.Fragment >
+                <Route path='/tweet/:id' >
+                  <TweetDetail />
+                </Route>
+                <Route exact path='/' >
+                    <TweetComponent />
+                  </Route>
+                <Route path='/profiles/:username' >
+                  <Profile />
+                  </Route>
+                </React.Fragment>          
+                :
+             <Redirect to={{pathname:'/login', state:'Please log in to view that page'}} />
+          }
+      </Switch>  
+    </Router>
+        )
   }
 
     render() {
         return (
+        <div className='container-fluid'>
           <div className='row'>
-            <div className='col-8 mx-auto'>
-            {//this.Pages()
+            <div className='col-md-9 col-8 mx-auto'>
+            {this.Pages()
             }
-            <Profile />
             </div>
           </div>
+       </div> 
         );
     }
 }

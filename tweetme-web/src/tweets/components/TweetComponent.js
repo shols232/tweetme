@@ -17,10 +17,10 @@ const TweetComponent = (props) => {
 		setNewTweet(response)
 	}
 
-	 return (<div className="row">
+	 return (<React.Fragment>
 	    	{canTweet === true && <TweetCreateForm handleDidTweet={handleDidTweet} /> }
         		<TweetList tweet={newTweet} username={props.username}/> 
-    	</div>
+    	</React.Fragment>
 		)
 	}
 
